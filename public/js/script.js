@@ -6,8 +6,7 @@
  */
 
 // --- Configuration ---
-const API_BASE_URL = window.STUDENT_ASSIGNMENT_API_BASE_URL || window.APP_CONFIG?.apiBaseUrl || `${window.location.protocol}//${window.location.hostname}:8080/api`;
-
+const API_BASE_URL = 'https://assignment-backend-vsqh.onrender.com/api';
 // ============================================================
 // UTILITY FUNCTIONS
 // ============================================================
