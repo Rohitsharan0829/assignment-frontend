@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard - View your assignments, submissions, and upcoming deadlines.">
+    <title>Dashboard - Student Assignment Management System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+
+    <!-- ========== TOP NAVIGATION BAR ========== -->
+    <nav class="top-navbar">
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="brand">
+                <i class="bi bi-mortarboard-fill"></i>
+                <span>Assignment System</span>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">U</div>
+                <span id="userName">User</span>
+            </div>
+            <button class="btn-logout" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="nav-section">
+            <div class="nav-section-title">Main Menu</div>
+            <a href="student-dashboard.html" class="nav-link active">
+                <i class="bi bi-grid-1x2-fill"></i> Dashboard
+            </a>
+            <a href="assignments.html" class="nav-link">
+                <i class="bi bi-file-earmark-text"></i> Assignments
+            </a>
+        </div>
+
+        <!-- Student-only navigation -->
+        <div class="nav-section student-only">
+            <div class="nav-section-title">Student</div>
+            <a href="upload-assignment.html" class="nav-link">
+                <i class="bi bi-cloud-arrow-up"></i> Upload Assignment
+            </a>
+            <a href="assignments.html" class="nav-link">
+                <i class="bi bi-clock-history"></i> My Submissions
+            </a>
+        </div>
+
+        <!-- Faculty-only navigation -->
+        <div class="nav-section faculty-only">
+            <div class="nav-section-title">Faculty</div>
+            <a href="assignments.html" class="nav-link">
+                <i class="bi bi-plus-circle"></i> Manage Assignments
+            </a>
+            <a href="assignments.html" class="nav-link">
+                <i class="bi bi-people"></i> View Submissions
+            </a>
+        </div>
+    </aside>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content">
+        <!-- Alert Container -->
+        <div id="alertContainer"></div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="bi bi-grid-1x2-fill"></i> Dashboard</h1>
+            <p>Welcome back! Here's an overview of your activity.</p>
+        </div>
+
+        <!-- ===== STAT CARDS ===== -->
+        <div class="stats-grid">
+            <!-- For Student: Total Submissions | For Faculty: Total Assignments -->
+            <div class="stat-card primary">
+                <div class="stat-icon">
+                    <i class="bi bi-file-earmark-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="totalSubmissions">0</h3>
+                    <p class="student-only">Total Submissions</p>
+                    <p class="faculty-only">Total Assignments</p>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="pendingReview">0</h3>
+                    <p class="student-only">Pending Review</p>
+                    <p class="faculty-only">Active Assignments</p>
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="gradedCount">0</h3>
+                    <p class="student-only">Graded</p>
+                    <p class="faculty-only">Expired</p>
+                </div>
+            </div>
+
+            <div class="stat-card danger">
+                <div class="stat-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="lateCount">0</h3>
+                    <p>Late Submissions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== UPCOMING DEADLINES ===== -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2><i class="bi bi-calendar-event"></i> Upcoming Deadlines</h2>
+                <a href="assignments.html" class="btn btn-sm btn-outline">View All</a>
+            </div>
+            <div class="card-body" id="upcomingDeadlines">
+                <div class="loading-overlay">
+                    <span class="spinner"></span> Loading deadlines...
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== RECENT ACTIVITY ===== -->
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="student-only"><i class="bi bi-clock-history"></i> Recent Submissions</h2>
+                <h2 class="faculty-only"><i class="bi bi-file-earmark-text"></i> My Assignments</h2>
+            </div>
+            <div class="card-body" id="recentSubmissions">
+                <div class="loading-overlay">
+                    <span class="spinner"></span> Loading data...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== SUBMISSIONS MODAL (for Faculty) ===== -->
+    <div class="modal-overlay" id="submissionsModal">
+        <div class="modal-content" style="max-width:900px;">
+            <div class="modal-header">
+                <h3><i class="bi bi-people"></i> Student Submissions</h3>
+                <button class="modal-close" onclick="closeModal('submissionsModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="submissionsModalBody">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== GRADE MODAL (for Faculty) ===== -->
+    <div class="modal-overlay" id="gradeModal">
+        <div class="modal-content" style="max-width:500px;">
+            <div class="modal-header">
+                <h3><i class="bi bi-pencil-square"></i> Grade Submission</h3>
+                <button class="modal-close" onclick="closeModal('gradeModal')">&times;</button>
+            </div>
+            <form onsubmit="submitGrade(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="gradeSubmissionId">
+                    <div class="form-group">
+                        <label class="form-label">Marks (out of <span id="gradeMaxMarks">100</span>)</label>
+                        <input type="number" class="form-control" id="gradeMarks"
+                               min="0" required placeholder="Enter marks">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Feedback</label>
+                        <textarea class="form-control" id="gradeFeedback"
+                                  placeholder="Enter feedback for the student..." rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('gradeModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> Save Grade
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
+</html>

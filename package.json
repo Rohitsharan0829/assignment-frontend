@@ -1,0 +1,22 @@
+{
+  "name": "student-assignment-management-system-frontend",
+  "version": "1.0.0",
+  "description": "Student Assignment Management System Client Portal",
+  "main": "public/index.html",
+  "scripts": {
+    "start": "npx serve public -p 3000",
+    "deploy": "firebase deploy --only hosting"
+  },
+  "keywords": [
+    "student",
+    "assignment",
+    "management",
+    "bootstrap",
+    "javascript"
+  ],
+  "author": "Rohith Sharan",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
